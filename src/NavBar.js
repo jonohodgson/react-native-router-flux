@@ -79,6 +79,18 @@ const styles = StyleSheet.create({
     borderBottomColor: '#828287',
     position: 'absolute',
   },
+  /* JH EDIT - Apply height to content container, to help with absolute positioning */
+  content: {
+    //backgroundColor: 'yellow',
+    ...Platform.select({
+      ios: {
+        height: 64,
+      },
+      android: {
+        height: 54,
+      },
+    }),
+  },
   backButton: {
     height: 37,
     position: 'absolute',
@@ -352,20 +364,21 @@ class NavBar extends React.Component {
         );
       }
 
-      if (!onPress && !!drawer && typeof drawer.toggle === 'function') {
-        buttonImage = state.drawerImage;
-        if (buttonImage || menuIcon) {
-          onPress = drawer.toggle;
-        }
-        if (!menuIcon) {
-          menuIcon = (
-            <Image
-              source={buttonImage}
-              style={leftButtonStyle}
-            />
-          );
-        }
-      }
+      /* JH EDIT - Disable the annoying auto drawer button and toggle feature */
+      /*if (!onPress && !!drawer && typeof drawer.toggle === 'function') {
+       buttonImage = state.drawerImage;
+       if (buttonImage || menuIcon) {
+       onPress = drawer.toggle;
+       }
+       if (!menuIcon) {
+       menuIcon = (
+       <Image
+       source={buttonImage}
+       style={leftButtonStyle}
+       />
+       );
+       }
+       }*/
 
       if (onPress && (leftTitle || buttonImage)) {
         onPress = onPress.bind(null, state);
@@ -471,7 +484,8 @@ class NavBar extends React.Component {
     const renderLeftButton = wrapByStyle(selected.renderLeftButton, leftButtonStyle) ||
       wrapByStyle(selected.component.renderLeftButton, leftButtonStyle) ||
       this.renderLeftButton;
-    const renderRightButton = wrapByStyle(selected.renderRightButton, rightButtonStyle) ||
+    /* JH EDIT - Allow props.rightButtonStyle to override default container when using renderRightButton */
+    const renderRightButton = wrapByStyle(selected.renderRightButton, selected.rightButtonStyle) ||
       wrapByStyle(selected.component.renderRightButton, rightButtonStyle) ||
       this.renderRightButton;
     const renderBackButton = wrapByStyle(selected.renderBackButton, leftButtonStyle) ||
@@ -483,7 +497,8 @@ class NavBar extends React.Component {
     const navigationBarBackgroundImage = this.props.navigationBarBackgroundImage ||
       state.navigationBarBackgroundImage;
     const contents = (
-      <View>
+      /* JH EDIT - Apply height to content container, to help with absolute positioning */
+      <View style={styles.content}>
         {renderTitle ? renderTitle(navProps) : state.children.map(this.renderTitle, this)}
         {renderBackButton(navProps) || renderLeftButton(navProps)}
         {renderRightButton(navProps)}
